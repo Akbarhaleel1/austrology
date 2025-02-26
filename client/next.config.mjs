@@ -3,19 +3,16 @@
 
 // export default nextConfig;
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-    async redirects() {
-      return [
-        {
-          source: "/:path*",
-          has: [{ type: "protocol", value: "http" }],
-          destination: "https://austrology.vercel.app/:path*",
-          permanent: true,
-        },
-      ];
-    },
-  };
-  
-  export default nextConfig;
-  
+import { NextResponse } from "next/server";
+
+export function middleware(req) {
+  const url = req.nextUrl;
+
+  // If request is HTTP, redirect to HTTPS
+  if (url.protocol === "http:") {
+    url.protocol = "https:";
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
+}
