@@ -4,7 +4,7 @@ const { getAccessToken } = require("./contorller");
 const { getKundliData, getCalendarData, getInauspiciousPeriod } = require("./components/components");
 const app = express();
 
-const PORT = 3000;
+const PORT = 3001;
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
