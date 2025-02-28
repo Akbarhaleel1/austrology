@@ -93,12 +93,33 @@ module.exports = {
       );
 
       console.log("Fetched Data:", response.data.data.muhurat);
+      console.log("Fetched Data:");
       response.data.data.muhurat.forEach(item => {
-        console.log(`- Name: ${item.name}`);
-        console.log(`  Type: ${item.type}`);
-        console.log(`  Period:`, item.period); // Assuming 'period' is an array of objects
-        console.log("--------------------------");
-    });
+          console.log(`- Name: ${item.name}`);
+          console.log(`  Type: ${item.type}`);
+          console.log(`  Period:`);
+      
+          item.period.forEach(period => {
+              const formattedStart = new Intl.DateTimeFormat('en-US', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true,
+                  timeZone: 'Asia/Kolkata' // Convert to IST (Adjust as needed)
+              }).format(new Date(period.start));
+      
+              const formattedEnd = new Intl.DateTimeFormat('en-US', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true,
+                  timeZone: 'Asia/Kolkata'
+              }).format(new Date(period.end));
+      
+              console.log(`    - ${formattedStart} to ${formattedEnd}`);
+          });
+      
+          console.log("--------------------------");
+      });
+      
           return response.data;
     } catch (error) {
       console.error(
