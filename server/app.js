@@ -3,6 +3,8 @@ const express = require("express");
 const { getAccessToken } = require("./contorller");
 const { getKundliData, getCalendarData, getInauspiciousPeriod } = require("./components/components");
 const app = express();
+const cors = require('cors');
+app.use(cors());
 
 const PORT = 3001;
 
@@ -89,5 +91,5 @@ app.get("/calendar", async (req, res) => {
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running onnn http://localhost:${PORT}`);
+    console.log(`Server is running onn http://localhost:${PORT}`);
 });
