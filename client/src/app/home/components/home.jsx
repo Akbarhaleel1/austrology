@@ -208,7 +208,7 @@ function App() {
   // Fetch Panchang data
   const fetchPanchangData = async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/kundli`, {
+      const response = await axios.get(`http://austrology.synxup.tech/api/kundli`, {
         params: {
           datetime: datetime,
           coordinates: coordinates,
@@ -228,7 +228,7 @@ function App() {
   // Fetch Calendar data
   const fetchCalendarData = async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/calendar`, {
+      const response = await axios.get(`http://austrology.synxup.tech/calendar`, {
         params: {
           datetime: datetime,
         },
@@ -252,7 +252,7 @@ function App() {
         return false;
       }
 
-      const response = await axios.get("http://localhost:3001/inauspicious-period", {
+      const response = await axios.get("http://austrology.synxup.tech/inauspicious-period", {
         params: {
           datetime: datetime,
           coordinates: `${latitude},${longitude}`,
