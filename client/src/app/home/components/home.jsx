@@ -4,9 +4,8 @@
 import React, { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
 import axios from "axios";
-import ZodiacComponent from './ZodiacComponent'
 import dayjs from "dayjs";
-
+import DynamicDataComponent from './DynamicDataComponent'
 function App() {
   // Replace zodiacSigns with image URLs and animation properties
   const zodiacSigns = [
@@ -68,7 +67,7 @@ function App() {
   const [selectedZodiac, setSelectedZodiac] = useState(null);
   const [showPulse, setShowPulse] = useState(false);
   const [dataLastFetched, setDataLastFetched] = useState(null);
-
+  const [goodTime, setGoodTime] = useState(null);
   // Constants for cache
   const CACHE_KEYS = {
     PANCHANG: 'panchang_data',
@@ -263,10 +262,9 @@ function App() {
       });
 
       if (response.data?.data) {
-        const data = response.data;
-        // saveToCache(CACHE_KEYS.INAUSPICIOUS, data);
+        const data = response.data.data;
         console.log('data is', data)
-        setSelectedZodiac(data)
+        setGoodTime(data)
         if (data?.calendar_date) {
           console.log("Calendar Date:", data.calendar_date);
         } else {
@@ -331,15 +329,6 @@ function App() {
   // Manual refresh function for user-triggered refresh
   const handleRefresh = () => {
     fetchData();
-  };
-
-  const formatTime = (timestamp) => {
-    return new Intl.DateTimeFormat("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-      timeZone: "Asia/Kolkata", // Adjust timezone if needed
-    }).format(new Date(timestamp));
   };
 
   // Click handler for zodiac signs
@@ -591,38 +580,9 @@ function App() {
               </div>
             </div>
             {/* Kaala Times Grid */}
-            <div className="grid grid-cols-5 gap-4">
-              {[
-                { title: "Amrit Kaal", bg: "#00c853", times: ["04:10 AM", "to", "05:46 AM"] },
-                { title: "Dur Muhurath", bg: "#2196f3", times: ["12:51 PM to", "01:36 PM,", "03:05 PM to", "03:50 PM"] },
-                { title: "Rahu Kaal", bg: "#9c27b0", times: ["8:16 AM", "to", "9:40 AM"] },
-                { title: "Varjyam", bg: "#3f51b5", times: ["07:24 AM to", "09:02 AM,", "06:36 PM to", "08:12 PM"] },
-                { title: "Yamaganda", bg: "#f44336", times: ["11:04 AM", "to", "12:28 PM"] }
-              ].map((item, index) => (
-                <div 
-                  key={index} 
-                  className="rounded-2xl overflow-hidden bg-white shadow-lg transform transition-all duration-500 hover:scale-105 animate-fadeIn"
-                  style={{ animationDelay: `${index * 0.15}s` }}
-                >
-                  <div 
-                    className="text-white p-2 text-center font-bold text-lg animate-pulse"
-                    style={{ backgroundColor: item.bg }}
-                  >
-                    {item.title}
-                  </div>
-                  <div className="p-4 text-[#1a237e] text-center space-y-1">
-                    {item.times.map((time, idx) => (
-                      <div 
-                        key={idx} 
-                        className="transition-all duration-300 transform hover:translate-y-1"
-                      >
-                        {time}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+            
+            <DynamicDataComponent data={goodTime} />
+      
           </div>
         </div>
       </div>
@@ -647,7 +607,28 @@ function App() {
         </div>
         
         <div className="grid grid-cols-1 gap-4 relative z-10">
-          <ZodiacComponent data={selectedZodiac} />
+          {zodiacSigns.map((sign, index) => (
+            <div
+              key={index}
+              className={`w-16 h-16 rounded-full flex items-center justify-center cursor-pointer transition-all duration-500 transform hover:scale-110 animate-fadeIn ${selectedZodiac === index ? 'animate-bounce' : ''}`}
+              style={{ 
+                backgroundColor: sign.bg,
+                animationDelay: sign.animationDelay,
+                boxShadow: selectedZodiac === index ? '0 0 20px 5px rgba(255,255,255,0.7)' : 'none'
+              }}
+              onClick={() => handleZodiacClick(index)}
+            >
+              <img
+                src={sign.icon}
+                alt={`Zodiac Sign ${index + 1}`}
+                className={`w-full h-full rounded-full object-cover transition-all duration-500 ${selectedZodiac === index ? 'animate-spin-slow' : ''}`}
+              />
+              {/* Glow effect for selected zodiac */}
+              {selectedZodiac === index && (
+                <div className="absolute inset-0 rounded-full bg-white/30 animate-pulse z-0"></div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
       
