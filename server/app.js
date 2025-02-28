@@ -17,11 +17,14 @@ app.use(express.json());
 
 // Simple GET endpoint
 app.get("/", (req, res) => {
+    console.log('Hello, Node.js Server is Running')
     res.send("Hello, Node.js Server is Running!");
 });
 
 // Endpoint to fetch Kundli data
 app.get("/api/kundli", async (req, res) => {
+    console.log('api/kundli')
+
     const { datetime, coordinates } = req.query;
 
     if (!datetime || !coordinates) {
