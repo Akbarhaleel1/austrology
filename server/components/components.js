@@ -66,7 +66,7 @@ module.exports = {
     latitude,
     longitude,
     ayanamsa = 1,
-    language = "hi"
+    language = "en"
   ) => {
     console.log("getInauspiciousPeriod method is working");
 
@@ -93,8 +93,13 @@ module.exports = {
       );
 
       console.log("Fetched Data:", response.data.data.muhurat);
-      console.log("Fetched Data:", response.data.data.muhurat.map(item => item.period));
-      return response.data;
+      response.data.data.muhurat.forEach(item => {
+        console.log(`- Name: ${item.name}`);
+        console.log(`  Type: ${item.type}`);
+        console.log(`  Period:`, item.period); // Assuming 'period' is an array of objects
+        console.log("--------------------------");
+    });
+          return response.data;
     } catch (error) {
       console.error(
         "Error fetching inauspicious period:",
