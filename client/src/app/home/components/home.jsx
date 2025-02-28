@@ -332,6 +332,15 @@ function App() {
     fetchData();
   };
 
+  const formatTime = (timestamp) => {
+    return new Intl.DateTimeFormat("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "Asia/Kolkata", // Adjust timezone if needed
+    }).format(new Date(timestamp));
+  };
+
   // Click handler for zodiac signs
   const handleZodiacClick = (index) => {
     console.log(`Zodiac sign ${index + 1} clicked`);
@@ -654,9 +663,36 @@ function App() {
                 className={`w-full h-full rounded-full object-cover transition-all duration-500 ${selectedZodiac === index ? 'animate-spin-slow' : ''}`}
               />
               {/* Glow effect for selected zodiac */}
-              {selectedZodiac === index && (
+              {/* {selectedZodiac === index && (
                 <div className="absolute inset-0 rounded-full bg-white/30 animate-pulse z-0"></div>
-              )}
+              )} */}
+              {selectedZodiac.map((item, index) => (
+          <li
+            key={item.id}
+            onClick={() => setSelectedZodiac(index)}
+            className={`relative p-3 border rounded-lg cursor-pointer transition duration-200 ${
+              selectedZodiac === index ? "bg-gray-200" : "bg-white"
+            }`}
+          >
+            {/* Highlight Effect */}
+            {selectedZodiac === index && (
+              <div className="absolute inset-0 rounded-full bg-white/30 animate-pulse z-0"></div>
+            )}
+
+            <h3 className="text-md font-semibold">{item.name}</h3>
+            <p className="text-sm text-gray-600">{item.type}</p>
+
+            {/* Display formatted period */}
+            <p className="text-sm text-gray-800 mt-1">
+              {item.period.map((p, i) => (
+                <span key={i} className="block">
+                  {formatTime(p.start)} - {formatTime(p.end)}
+                </span>
+              ))}
+            </p>
+          </li>
+        ))}
+
             </div>
           ))}
         </div>
