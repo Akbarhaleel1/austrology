@@ -93,6 +93,7 @@ module.exports = {
       );
 
       console.log("Fetched Data:", response.data.data.muhurat);
+      console.log("Fetched Data:", response.data.data.muhurat.map(item => item.period));
       return response.data;
     } catch (error) {
       console.error(
