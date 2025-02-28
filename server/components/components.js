@@ -93,7 +93,7 @@ module.exports = {
       );
 
       console.log("Fetched Data:", response.data.data.muhurat);
-      console.log("Fetched Data:");
+      console.log("Fetched Data:" );
       response.data.data.muhurat.forEach(item => {
           console.log(`- Name: ${item.name}`);
           console.log(`  Type: ${item.type}`);
@@ -120,7 +120,7 @@ module.exports = {
           console.log("--------------------------");
       });
       
-          return response.data;
+          return response.data.data.muhurat;
     } catch (error) {
       console.error(
         "Error fetching inauspicious period:",
