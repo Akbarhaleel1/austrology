@@ -1,4 +1,5 @@
 
+
 "use client";
 import React, { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
@@ -116,49 +117,49 @@ function App() {
   //   loadCachedData();
   // }, []);
 
-  // // Function to load cached data
-  // const loadCachedData = () => {
-  //   try {
-  //     // Check if we have cached coordinates
-  //     const cachedCoordinates = localStorage.getItem(CACHE_KEYS.COORDINATES);
-  //     if (cachedCoordinates) {
-  //       const [lat, lng] = cachedCoordinates.split(',');
-  //       setLatitude(parseFloat(lat));
-  //       setLongitude(parseFloat(lng));
-  //       setCoordinates(cachedCoordinates);
-  //     }
+  // Function to load cached data
+  const loadCachedData = () => {
+    try {
+      // Check if we have cached coordinates
+      const cachedCoordinates = localStorage.getItem(CACHE_KEYS.COORDINATES);
+      if (cachedCoordinates) {
+        const [lat, lng] = cachedCoordinates.split(',');
+        setLatitude(parseFloat(lat));
+        setLongitude(parseFloat(lng));
+        setCoordinates(cachedCoordinates);
+      }
       
-  //     // Check when data was last fetched
-  //     const lastFetched = localStorage.getItem(CACHE_KEYS.LAST_FETCHED);
-  //     const now = new Date().getTime();
+      // Check when data was last fetched
+      const lastFetched = localStorage.getItem(CACHE_KEYS.LAST_FETCHED);
+      const now = new Date().getTime();
       
-  //     // If cache is valid (less than 6 hours old)
-  //     if (lastFetched && (now - parseInt(lastFetched)) < CACHE_EXPIRY) {
-  //       // Load panchang data
-  //       const cachedPanchang = localStorage.getItem(CACHE_KEYS.PANCHANG);
-  //       if (cachedPanchang) {
-  //         setPanchangData(JSON.parse(cachedPanchang));
-  //       }
+      // If cache is valid (less than 6 hours old)
+      if (lastFetched && (now - parseInt(lastFetched)) < CACHE_EXPIRY) {
+        // Load panchang data
+        const cachedPanchang = localStorage.getItem(CACHE_KEYS.PANCHANG);
+        if (cachedPanchang) {
+          setPanchangData(JSON.parse(cachedPanchang));
+        }
         
-  //       // Load calendar data
-  //       const cachedCalendar = localStorage.getItem(CACHE_KEYS.CALENDAR);
-  //       if (cachedCalendar) {
-  //         setCalenderData(JSON.parse(cachedCalendar));
-  //       }
+        // Load calendar data
+        const cachedCalendar = localStorage.getItem(CACHE_KEYS.CALENDAR);
+        if (cachedCalendar) {
+          setCalenderData(JSON.parse(cachedCalendar));
+        }
         
-  //       setDataLastFetched(parseInt(lastFetched));
-  //       setLoading(false);
+        setDataLastFetched(parseInt(lastFetched));
+        setLoading(false);
         
-  //       console.log("Using cached data from", new Date(parseInt(lastFetched)).toLocaleString());
-  //       return true;
-  //     }
+        console.log("Using cached data from", new Date(parseInt(lastFetched)).toLocaleString());
+        return true;
+      }
       
-  //     return false;
-  //   } catch (error) {
-  //     console.error("Error loading cached data:", error);
-  //     return false;
-  //   }
-  // };
+      return false;
+    } catch (error) {
+      console.error("Error loading cached data:", error);
+      return false;
+    }
+  };
 
   // Function to save data to cache
   // const saveToCache = (key, data) => {
@@ -188,9 +189,9 @@ function App() {
           setError(error);
           
           // Try to load data with default coordinates if cached
-          if (!loadCachedData()) {
-            setLoading(false);
-          }
+          // if (!loadCachedData()) {
+          //   setLoading(false);
+          // }
         }
       );
     } else if (!latitude && !longitude) {
@@ -198,9 +199,9 @@ function App() {
       setError(new Error("Geolocation is not supported by this browser."));
       
       // Try to load data with default coordinates if cached
-      if (!loadCachedData()) {
-        setLoading(false);
-      }
+      // if (!loadCachedData()) {
+      //   setLoading(false);
+      // }
     }
   }, []);
 
@@ -217,7 +218,7 @@ function App() {
       const data = response.data.data.data;
       console.log('data',data)
       setPanchangData(data);
-      saveToCache(CACHE_KEYS.PANCHANG, data);
+      // saveToCache(CACHE_KEYS.PANCHANG, data);
       return true;
     } catch (error) {
       console.error("Error fetching panchang data:", error);
@@ -236,7 +237,7 @@ function App() {
       });
       const data = response.data.data.data;
       setCalenderData(data);
-      saveToCache(CACHE_KEYS.CALENDAR, data);
+      // saveToCache(CACHE_KEYS.CALENDAR, data);
       return true;
     } catch (error) {
       console.error("Error fetching calendar data:", error);
@@ -262,7 +263,7 @@ function App() {
 
       if (response.data?.data) {
         const data = response.data.data;
-        saveToCache(CACHE_KEYS.INAUSPICIOUS, data);
+        // saveToCache(CACHE_KEYS.INAUSPICIOUS, data);
         
         if (data?.calendar_date) {
           console.log("Calendar Date:", data.calendar_date);
