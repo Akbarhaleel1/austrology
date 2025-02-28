@@ -2,8 +2,8 @@
 const axios = require('axios');
 const qs = require('qs');
 
-const CLIENT_ID = 'e01da02f-da4c-4b3f-869b-21d1321419b4';
-const CLIENT_SECRET = 'oDmhNQfH9vuqmoaNgA9m9j26HKTzEwG1pXnzJ7iN';
+const CLIENT_ID = '03c4b317-3cf2-415b-b144-9115a7dc1878';
+const CLIENT_SECRET = '3buFiWztBO9KXWMUrXKUTjhJU4N2sBpmO5W3Vbe4';
 const TOKEN_URL = 'https://api.prokerala.com/token';
 
 async function getAccessToken() {
