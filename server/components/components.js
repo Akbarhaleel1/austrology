@@ -66,7 +66,7 @@ module.exports = {
     latitude,
     longitude,
     ayanamsa = 1,
-    language = "en"
+    language = "hi"
   ) => {
     console.log("getInauspiciousPeriod method is working");
 
@@ -92,7 +92,7 @@ module.exports = {
         }
       );
 
-      console.log("Fetched Data:", response.data);
+      console.log("Fetched Data:", response.data.data.muhurat);
       return response.data;
     } catch (error) {
       console.error(
