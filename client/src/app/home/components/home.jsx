@@ -262,9 +262,10 @@ function App() {
       });
 
       if (response.data?.data) {
-        const data = response.data.data;
+        const data = response.data;
         // saveToCache(CACHE_KEYS.INAUSPICIOUS, data);
-        console.log('data is',data)
+        console.log('data is', data)
+        setSelectedZodiac(data)
         if (data?.calendar_date) {
           console.log("Calendar Date:", data.calendar_date);
         } else {
