@@ -30,7 +30,7 @@ module.exports = {
     accessToken,
     date,
     calendarType = "lunar",
-    language = "en"
+    language = "hi"
   ) {
     try {
       // Ensure date is in YYYY-MM-DD format
