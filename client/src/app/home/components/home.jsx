@@ -1,5 +1,4 @@
 
-
 "use client";
 import React, { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
@@ -113,62 +112,62 @@ function App() {
   }, [datetime]);
 
   // Load cached data on initial mount
-  useEffect(() => {
-    loadCachedData();
-  }, []);
+  // useEffect(() => {
+  //   loadCachedData();
+  // }, []);
 
-  // Function to load cached data
-  const loadCachedData = () => {
-    try {
-      // Check if we have cached coordinates
-      const cachedCoordinates = localStorage.getItem(CACHE_KEYS.COORDINATES);
-      if (cachedCoordinates) {
-        const [lat, lng] = cachedCoordinates.split(',');
-        setLatitude(parseFloat(lat));
-        setLongitude(parseFloat(lng));
-        setCoordinates(cachedCoordinates);
-      }
+  // // Function to load cached data
+  // const loadCachedData = () => {
+  //   try {
+  //     // Check if we have cached coordinates
+  //     const cachedCoordinates = localStorage.getItem(CACHE_KEYS.COORDINATES);
+  //     if (cachedCoordinates) {
+  //       const [lat, lng] = cachedCoordinates.split(',');
+  //       setLatitude(parseFloat(lat));
+  //       setLongitude(parseFloat(lng));
+  //       setCoordinates(cachedCoordinates);
+  //     }
       
-      // Check when data was last fetched
-      const lastFetched = localStorage.getItem(CACHE_KEYS.LAST_FETCHED);
-      const now = new Date().getTime();
+  //     // Check when data was last fetched
+  //     const lastFetched = localStorage.getItem(CACHE_KEYS.LAST_FETCHED);
+  //     const now = new Date().getTime();
       
-      // If cache is valid (less than 6 hours old)
-      if (lastFetched && (now - parseInt(lastFetched)) < CACHE_EXPIRY) {
-        // Load panchang data
-        const cachedPanchang = localStorage.getItem(CACHE_KEYS.PANCHANG);
-        if (cachedPanchang) {
-          setPanchangData(JSON.parse(cachedPanchang));
-        }
+  //     // If cache is valid (less than 6 hours old)
+  //     if (lastFetched && (now - parseInt(lastFetched)) < CACHE_EXPIRY) {
+  //       // Load panchang data
+  //       const cachedPanchang = localStorage.getItem(CACHE_KEYS.PANCHANG);
+  //       if (cachedPanchang) {
+  //         setPanchangData(JSON.parse(cachedPanchang));
+  //       }
         
-        // Load calendar data
-        const cachedCalendar = localStorage.getItem(CACHE_KEYS.CALENDAR);
-        if (cachedCalendar) {
-          setCalenderData(JSON.parse(cachedCalendar));
-        }
+  //       // Load calendar data
+  //       const cachedCalendar = localStorage.getItem(CACHE_KEYS.CALENDAR);
+  //       if (cachedCalendar) {
+  //         setCalenderData(JSON.parse(cachedCalendar));
+  //       }
         
-        setDataLastFetched(parseInt(lastFetched));
-        setLoading(false);
+  //       setDataLastFetched(parseInt(lastFetched));
+  //       setLoading(false);
         
-        console.log("Using cached data from", new Date(parseInt(lastFetched)).toLocaleString());
-        return true;
-      }
+  //       console.log("Using cached data from", new Date(parseInt(lastFetched)).toLocaleString());
+  //       return true;
+  //     }
       
-      return false;
-    } catch (error) {
-      console.error("Error loading cached data:", error);
-      return false;
-    }
-  };
+  //     return false;
+  //   } catch (error) {
+  //     console.error("Error loading cached data:", error);
+  //     return false;
+  //   }
+  // };
 
   // Function to save data to cache
-  const saveToCache = (key, data) => {
-    try {
-      localStorage.setItem(key, JSON.stringify(data));
-    } catch (error) {
-      console.error(`Error saving ${key} to cache:`, error);
-    }
-  };
+  // const saveToCache = (key, data) => {
+  //   try {
+  //     localStorage.setItem(key, JSON.stringify(data));
+  //   } catch (error) {
+  //     console.error(`Error saving ${key} to cache:`, error);
+  //   }
+  // };
 
   // Fetch user's geolocation
   useEffect(() => {
