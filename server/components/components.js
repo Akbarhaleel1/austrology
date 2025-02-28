@@ -29,7 +29,7 @@ module.exports = {
   getCalendarData: async function (
     accessToken,
     date,
-    calendarType = "lunar",
+    calendarType = "vikram-samvat",
     language = "hi"
   ) {
     try {
