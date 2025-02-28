@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
 import axios from "axios";
+import ZodiacComponent from './ZodiacComponent'
 import dayjs from "dayjs";
 
 function App() {
@@ -646,55 +647,7 @@ function App() {
         </div>
         
         <div className="grid grid-cols-1 gap-4 relative z-10">
-          {zodiacSigns.map((sign, index) => (
-            <div
-              key={index}
-              className={`w-16 h-16 rounded-full flex items-center justify-center cursor-pointer transition-all duration-500 transform hover:scale-110 animate-fadeIn ${selectedZodiac === index ? 'animate-bounce' : ''}`}
-              style={{ 
-                backgroundColor: sign.bg,
-                animationDelay: sign.animationDelay,
-                boxShadow: selectedZodiac === index ? '0 0 20px 5px rgba(255,255,255,0.7)' : 'none'
-              }}
-              onClick={() => handleZodiacClick(index)}
-            >
-              <img
-                src={sign.icon}
-                alt={`Zodiac Sign ${index + 1}`}
-                className={`w-full h-full rounded-full object-cover transition-all duration-500 ${selectedZodiac === index ? 'animate-spin-slow' : ''}`}
-              />
-              {/* Glow effect for selected zodiac */}
-              {/* {selectedZodiac === index && (
-                <div className="absolute inset-0 rounded-full bg-white/30 animate-pulse z-0"></div>
-              )} */}
-              {selectedZodiac.map((item, index) => (
-          <li
-            key={item.id}
-            onClick={() => setSelectedZodiac(index)}
-            className={`relative p-3 border rounded-lg cursor-pointer transition duration-200 ${
-              selectedZodiac === index ? "bg-gray-200" : "bg-white"
-            }`}
-          >
-            {/* Highlight Effect */}
-            {selectedZodiac === index && (
-              <div className="absolute inset-0 rounded-full bg-white/30 animate-pulse z-0"></div>
-            )}
-
-            <h3 className="text-md font-semibold">{item.name}</h3>
-            <p className="text-sm text-gray-600">{item.type}</p>
-
-            {/* Display formatted period */}
-            <p className="text-sm text-gray-800 mt-1">
-              {item.period.map((p, i) => (
-                <span key={i} className="block">
-                  {formatTime(p.start)} - {formatTime(p.end)}
-                </span>
-              ))}
-            </p>
-          </li>
-        ))}
-
-            </div>
-          ))}
+          <ZodiacComponent data={selectedZodiac} />
         </div>
       </div>
       
