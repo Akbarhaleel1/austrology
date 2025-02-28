@@ -9,7 +9,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <title>Austrology</title>
+        <title>Astrology</title>
         <meta name="description" content="Synx Up is a cutting-edge software company providing innovative and scalable solutions for businesses worldwide." />
         <meta name="keywords" content="Synx Up, software company, innovative software solutions, scalable software, business software, SaaS, custom software development, tech solutions" />
         <meta name="author" content="Synx Up Team" />
