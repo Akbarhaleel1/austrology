@@ -28,7 +28,7 @@ app.get("/api/kundli", async (req, res) => {
     console.log('api/kundli')
 
     const { datetime, coordinates } = req.query;
-
+    console.log("Received params:", datetime, coordinates);
     if (!datetime || !coordinates) {
         return res.status(400).json({ error: "datetime and coordinates are required" });
     }
@@ -47,18 +47,19 @@ app.get("/api/kundli", async (req, res) => {
 });
 app.get("/inauspicious-period", async (req, res) => {
   const { datetime, coordinates } = req.query;
-
+    console.log('inauspicious-period is working', datetime, coordinates)
   if (!datetime || !coordinates) {
       return res.status(400).json({ error: "datetime and coordinates are required" });
-  }
-
+    }
+    console.log('1')
   // Extract latitude and longitude from coordinates string
-  const [latitude, longitude] = coordinates.split(",");
+    const [latitude, longitude] = coordinates.split(",");
+    console.log('latitude', latitude)
+    console.log('longitude', longitude)
 
   try {
       const accessToken = await getAccessToken();
       const kundliData = await getInauspiciousPeriod(accessToken, datetime, latitude, longitude);
-      
       console.log("Kundli Data:", kundliData);
       res.status(200).json({ data: kundliData });
 

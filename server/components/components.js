@@ -50,8 +50,8 @@ module.exports = {
           },
         }
       );
-      console.log('caledner data for testing api',response.data)
-      return response.data;
+      console.log('caledner data for testing apisss',response.data.data)
+      return response.data.data;
     } catch (error) {
       console.error(
         "Error fetching Calendar data:",
@@ -68,15 +68,15 @@ module.exports = {
     ayanamsa = 1,
     language = "en"
   ) => {
-    console.log("getInauspiciousPeriod method is working");
+    console.log("getInauspiciousPeriod method is working..................");
 
     try {
       // Ensure datetime is properly formatted
       const formattedDate = new Date(date).toISOString(); // Ensures ISO 8601 format
-
+      console.log('formattedDate', formattedDate)
       // Construct coordinates correctly
       const coordinates = `${latitude},${longitude}`;
-
+console.log('coordinates', coordinates)
       const response = await axios.get(
         "https://api.prokerala.com/v2/astrology/inauspicious-period",
         {
@@ -92,7 +92,8 @@ module.exports = {
         }
       );
 
-      console.log("Fetched Data:", response.data.data.muhurat);
+
+      console.log("Fetched Datasssssssssssssss:", response);
       console.log("Fetched Data:" );
       response.data.data.muhurat.forEach(item => {
           console.log(`- Name: ${item.name}`);
