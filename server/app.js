@@ -101,8 +101,9 @@ async function geocodePlace(place) {
       apiKey: '45dbc8cf891f4d6fbea1c59a62e45972', // Get from https://myprojects.geoapify.com
     },
   });
-  console.log('geocdeo response', response)
   const { lat, lon } = response.data.features[0].properties;
+  console.log('geocdeo response', lat, lon)
+
   return `${lat},${lon}`;
 }
 
