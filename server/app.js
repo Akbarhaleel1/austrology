@@ -132,7 +132,8 @@ function prepareRequestData(body) {
 
 // Route handler
 app.post('/birth-details', async (req, res) => {
-  console.log('birth-details is tiggering')
+  console.log('birth-details is tiggering',req.body)
+
   try {
     const { name, gender, birthDate, birthTime, placeOfBirth, language } = req.body;
     const { dateObj } = prepareRequestData(req.body);
