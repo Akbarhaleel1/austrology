@@ -24,6 +24,8 @@ app.get("/", (req, res) => {
   res.send("Hello, Node.js Server is Running!");
 });
 
+
+
 // Endpoint to fetch Kundli data
 app.get("/api/kundli", async (req, res) => {
   console.log('api/kundli')
