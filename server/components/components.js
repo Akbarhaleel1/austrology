@@ -1,5 +1,32 @@
 const axios = require("axios");
 module.exports = {
+  getDailyHoroscope: async function (accessToken, datetime, sign, type) {
+    try {
+      // Ensure datetime is properly formatted
+      const formattedDate = new Date(datetime).toISOString();
+
+      const response = await axios.get(
+        "https://api.prokerala.com/v2/horoscope/daily/advanced",
+        {
+          params: {
+            datetime: formattedDate,
+            sign: sign,
+            type: type
+          },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Error fetching daily horoscope:",
+        error.response ? error.response.data : error.message
+      );
+      throw error;
+    }
+  },
   getKundliData: async function (accessToken, datetime, coordinates) {
     try {
       const isoDatetime = new Date(datetime).toISOString();

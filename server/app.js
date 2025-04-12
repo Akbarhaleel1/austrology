@@ -1,7 +1,7 @@
 
 const express = require("express");
 const { getAccessToken } = require("./contorller");
-const { getKundliData, getCalendarData, getInauspiciousPeriod } = require("./components/components");
+const { getKundliData, getCalendarData, getInauspiciousPeriod, getDailyHoroscope } = require("./components/components");
 const app = express();
 const cors = require('cors');
 const { default: axios } = require("axios");
@@ -73,6 +73,36 @@ app.get("/inauspicious-period", async (req, res) => {
   }
 });
 
+
+app.get("/daily-horoscope", async (req, res) => {
+  console.log('daily-horoscope', req.query)
+  const { datetime, sign, type } = req.query;
+
+  if (!datetime || !sign || !type) {
+    return res.status(400).json({ error: "datetime, sign, and type are required" });
+  }
+
+  // Validate sign parameter
+  const validSigns = ['all', 'aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
+  if (!validSigns.includes(sign.toLowerCase())) {
+    return res.status(400).json({ error: "Invalid sign parameter" });
+  }
+
+  // Validate type parameter
+  const validTypes = ['all', 'general', 'health', 'career', 'love'];
+  if (!validTypes.includes(type.toLowerCase())) {
+    return res.status(400).json({ error: "Invalid type parameter" });
+  }
+
+  try {
+    const accessToken = await getAccessToken();
+    const horoscopeData = await getDailyHoroscope(accessToken, datetime, sign.toLowerCase(), type.toLowerCase());
+    res.status(200).json({ data: horoscopeData });
+  } catch (error) {
+    console.error('Error fetching daily horoscope:', error);
+    res.status(500).json({ error: "Failed to fetch daily horoscope" });
+  }
+});
 
 app.get("/calendar", async (req, res) => {
   const { datetime } = req.query;
