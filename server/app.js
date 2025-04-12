@@ -257,8 +257,7 @@ app.post('/kundali-matching', async (req, res) => {
 
     // Make API call to ProKerala
     const response = await callProKeralaAPI(accessToken, requestParams);
-    console.log('response', response.data.data)
-    // Process and format the response
+    console.log('Full response:', JSON.stringify(response.data.data, null, 2));    // Process and format the response
     const formattedResponse = formatResponse(response.data);
 console.log('formattedResponse', formattedResponse)
     res.json(response.data.data);
