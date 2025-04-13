@@ -75,13 +75,12 @@ app.get("/inauspicious-period", async (req, res) => {
 
 
 app.get("/daily-horoscope", async (req, res) => {
-  console.log('daily-horoscope', req.query)
+  console.log('daily-horoscope')
   const { datetime, sign, type } = req.query;
 
   if (!datetime || !sign || !type) {
     return res.status(400).json({ error: "datetime, sign, and type are required" });
   }
-
   // Validate sign parameter
   const validSigns = ['all', 'aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
   if (!validSigns.includes(sign.toLowerCase())) {
@@ -96,6 +95,7 @@ app.get("/daily-horoscope", async (req, res) => {
 
   try {
     const accessToken = await getAccessToken();
+    console.log('accessToken is working')
     const horoscopeData = await getDailyHoroscope(accessToken, datetime, sign.toLowerCase(), type.toLowerCase());
     res.status(200).json({ data: horoscopeData });
   } catch (error) {
@@ -257,9 +257,11 @@ app.post('/kundali-matching', async (req, res) => {
 
     // Make API call to ProKerala
     const response = await callProKeralaAPI(accessToken, requestParams);
-    console.log('Full response:', JSON.stringify(response.data.data, null, 2));    // Process and format the response
+    console.log('response', response.data.data)
+    // Process and format the response
     const formattedResponse = formatResponse(response.data);
 console.log('formattedResponse', formattedResponse)
+console.log('response.data.data', response.data.data)
     res.json(response.data.data);
   } catch (error) {
     console.error('Kundali matching error:', error);

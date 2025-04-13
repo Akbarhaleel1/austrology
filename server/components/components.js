@@ -1,32 +1,5 @@
 const axios = require("axios");
 module.exports = {
-  getDailyHoroscope: async function (accessToken, datetime, sign, type) {
-    try {
-      // Ensure datetime is properly formatted
-      const formattedDate = new Date(datetime).toISOString();
-
-      const response = await axios.get(
-        "https://api.prokerala.com/v2/horoscope/daily/advanced",
-        {
-          params: {
-            datetime: formattedDate,
-            sign: sign,
-            type: type
-          },
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error(
-        "Error fetching daily horoscope:",
-        error.response ? error.response.data : error.message
-      );
-      throw error;
-    }
-  },
   getKundliData: async function (accessToken, datetime, coordinates) {
     try {
       const isoDatetime = new Date(datetime).toISOString();
@@ -152,6 +125,90 @@ console.log('coordinates', coordinates)
     } catch (error) {
       console.error(
         "Error fetching inauspicious period:",
+        error.response ? error.response.data : error.message
+      );
+      throw error;
+    }
+  },
+  getDailyHoroscope: async function (accessToken, datetime, signs = 'all', types = 'all') {
+    try {
+      const validSigns = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
+      const validTypes = ['general', 'career', 'love', 'money'];
+      
+      // Process signs parameter
+      let selectedSigns = signs.toLowerCase() === 'all' ? validSigns : signs.toLowerCase().split(',');
+      // Validate each sign
+      selectedSigns.forEach(sign => {
+        if (!validSigns.includes(sign.trim())) {
+          throw new Error(`Invalid sign: ${sign}. Must be one of: ${validSigns.join(', ')}`);
+        }
+      });
+
+      // Process types parameter
+      let selectedTypes = types.toLowerCase() === 'all' ? validTypes : types.toLowerCase().split(',');
+      // Validate each type
+      selectedTypes.forEach(type => {
+        if (!validTypes.includes(type.trim())) {
+          throw new Error(`Invalid type: ${type}. Must be one of: ${validTypes.join(', ')}`);
+        }
+      });
+
+      // Calculate credits
+      const creditsPerRequest = 250;
+      const totalCredits = selectedSigns.length * selectedTypes.length * creditsPerRequest;
+console.log('totalCredits', totalCredits)
+      // Use a fixed date within the valid range (2025-04-11 to 2025-04-13)
+      const validDate = new Date('2025-04-12T00:00:00.000Z');
+console.log('validDate', validDate)
+      // Make parallel requests for all combinations
+      const requests = selectedSigns.flatMap(sign =>
+        selectedTypes.map(type =>
+          axios.get("https://api.prokerala.com/v2/horoscope/daily/advanced", {
+            params: {
+              datetime: validDate.toISOString(),
+              sign: sign.trim(),
+              type: type.trim()
+            },
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              Accept: 'application/json'
+            }
+          })
+        )
+      );
+
+      const responses = await Promise.all(requests);
+      
+      // Format the response
+      const result = {
+        credits: {
+          total: totalCredits,
+          breakdown: {
+            signs: selectedSigns.length,
+            types: selectedTypes.length,
+            base_rate: creditsPerRequest
+          }
+        },
+        predictions: {}
+      };
+
+      // Process responses
+      responses.forEach((response, index) => {
+        const signIndex = Math.floor(index / selectedTypes.length);
+        const typeIndex = index % selectedTypes.length;
+        const sign = selectedSigns[signIndex];
+        const type = selectedTypes[typeIndex];
+
+        if (!result.predictions[sign]) {
+          result.predictions[sign] = {};
+        }
+        result.predictions[sign][type] = response.data.data;
+      });
+
+      return result;
+    } catch (error) {
+      console.error(
+        "Error fetching daily horoscope:",
         error.response ? error.response.data : error.message
       );
       throw error;
