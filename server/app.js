@@ -30,8 +30,6 @@ app.get("/", (req, res) => {
 
 // Endpoint to fetch Kundli data
 app.get("/api/kundli", async (req, res) => {
-  console.log('api/kundli')
-
   const { datetime, coordinates } = req.query;
   console.log("Received params:", datetime, coordinates);
   if (!datetime || !coordinates) {
@@ -41,7 +39,6 @@ app.get("/api/kundli", async (req, res) => {
   try {
     const accessToken = await getAccessToken();
     const kundliData = await getKundliData(accessToken, datetime, coordinates);
-    // res.json(kundliData);
     console.log('kundliData', kundliData)
     res.status(200).json({ data: kundliData });
 
@@ -58,8 +55,6 @@ app.get("/inauspicious-period", async (req, res) => {
   }
   console.log('1');
   const [latitude, longitude] = coordinates.split(",");
-  console.log('latitude', latitude)
-  console.log('longitude', longitude)
 
   try {
     const accessToken = await getAccessToken();
@@ -77,7 +72,7 @@ app.get("/inauspicious-period", async (req, res) => {
 app.get("/daily-horoscope", async (req, res) => {
   console.log('daily-horoscope')
   const { datetime, sign, type } = req.query;
-
+  console.log('req.query', req.query)
   if (!datetime || !sign || !type) {
     return res.status(400).json({ error: "datetime, sign, and type are required" });
   }
@@ -86,7 +81,6 @@ app.get("/daily-horoscope", async (req, res) => {
   if (!validSigns.includes(sign.toLowerCase())) {
     return res.status(400).json({ error: "Invalid sign parameter" });
   }
-
   // Validate type parameter
   const validTypes = ['all', 'general', 'health', 'career', 'love'];
   if (!validTypes.includes(type.toLowerCase())) {

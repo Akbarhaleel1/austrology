@@ -50,7 +50,7 @@ module.exports = {
           },
         }
       );
-      console.log('caledner data for testing apisss',response.data.data)
+      console.log('caledner data for testing apisss', response.data.data)
       return response.data.data;
     } catch (error) {
       console.error(
@@ -76,7 +76,7 @@ module.exports = {
       console.log('formattedDate', formattedDate)
       // Construct coordinates correctly
       const coordinates = `${latitude},${longitude}`;
-console.log('coordinates', coordinates)
+      console.log('coordinates', coordinates)
       const response = await axios.get(
         "https://api.prokerala.com/v2/astrology/inauspicious-period",
         {
@@ -94,34 +94,34 @@ console.log('coordinates', coordinates)
 
 
       console.log("Fetched Datasssssssssssssss:", response);
-      console.log("Fetched Data:" );
+      console.log("Fetched Data:");
       response.data.data.muhurat.forEach(item => {
-          console.log(`- Name: ${item.name}`);
-          console.log(`  Type: ${item.type}`);
-          console.log(`  Period:`);
-      
-          item.period.forEach(period => {
-              const formattedStart = new Intl.DateTimeFormat('en-US', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: true,
-                  timeZone: 'Asia/Kolkata' // Convert to IST (Adjust as needed)
-              }).format(new Date(period.start));
-      
-              const formattedEnd = new Intl.DateTimeFormat('en-US', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: true,
-                  timeZone: 'Asia/Kolkata'
-              }).format(new Date(period.end));
-      
-              console.log(`    - ${formattedStart} to ${formattedEnd}`);
-          });
-      
-          console.log("--------------------------");
+        console.log(`- Name: ${item.name}`);
+        console.log(`  Type: ${item.type}`);
+        console.log(`  Period:`);
+
+        item.period.forEach(period => {
+          const formattedStart = new Intl.DateTimeFormat('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+            timeZone: 'Asia/Kolkata' // Convert to IST (Adjust as needed)
+          }).format(new Date(period.start));
+
+          const formattedEnd = new Intl.DateTimeFormat('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+            timeZone: 'Asia/Kolkata'
+          }).format(new Date(period.end));
+
+          console.log(`    - ${formattedStart} to ${formattedEnd}`);
+        });
+
+        console.log("--------------------------");
       });
-      
-          return response.data.data.muhurat;
+
+      return response.data.data.muhurat;
     } catch (error) {
       console.error(
         "Error fetching inauspicious period:",
@@ -134,7 +134,7 @@ console.log('coordinates', coordinates)
     try {
       const validSigns = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
       const validTypes = ['general', 'career', 'love', 'money'];
-      
+
       // Process signs parameter
       let selectedSigns = signs.toLowerCase() === 'all' ? validSigns : signs.toLowerCase().split(',');
       // Validate each sign
@@ -152,14 +152,14 @@ console.log('coordinates', coordinates)
           throw new Error(`Invalid type: ${type}. Must be one of: ${validTypes.join(', ')}`);
         }
       });
-
+      console.log('1')
       // Calculate credits
       const creditsPerRequest = 250;
       const totalCredits = selectedSigns.length * selectedTypes.length * creditsPerRequest;
-console.log('totalCredits', totalCredits)
+      console.log('totalCredits', totalCredits)
       // Use a fixed date within the valid range (2025-04-11 to 2025-04-13)
-      const validDate = new Date('2025-04-12T00:00:00.000Z');
-console.log('validDate', validDate)
+      const validDate = new Date('2025-04-13T00:00:00.000Z');
+      console.log('validDate', validDate)
       // Make parallel requests for all combinations
       const requests = selectedSigns.flatMap(sign =>
         selectedTypes.map(type =>
@@ -178,7 +178,7 @@ console.log('validDate', validDate)
       );
 
       const responses = await Promise.all(requests);
-      
+
       // Format the response
       const result = {
         credits: {
