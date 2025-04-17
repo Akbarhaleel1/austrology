@@ -179,7 +179,7 @@ module.exports = {
       );
 
       const responses = await Promise.all(requests);
-
+      console.log('responses is horoscrope', responses)
       // Format the response
       const result = {
         credits: {
@@ -205,6 +205,8 @@ module.exports = {
         }
         result.predictions[sign][type] = response.data.data;
       });
+
+      console.log('result in horoscope', result)
 
       return result;
     } catch (error) {
