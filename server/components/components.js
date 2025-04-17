@@ -130,12 +130,12 @@ module.exports = {
       throw error;
     }
   },
-  getDailyHoroscope: async function (accessToken, datetime, signs = 'all', types = 'all') {
+  getDailyHoroscope: async function (accessToken, dateTime, signs = 'all', types = 'all') {
     try {
-      console.log('datetime of getDailyHoroscope',datetime)
+      console.log('datetime of getDailyHoroscope',dateTime)
       const validSigns = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
       const validTypes = ['general', 'career', 'love', 'money'];
-
+      const datetime = new Date(dateTime).toISOString();
       // Process signs parameter
       let selectedSigns = signs.toLowerCase() === 'all' ? validSigns : signs.toLowerCase().split(',');
       // Validate each sign
@@ -159,8 +159,8 @@ module.exports = {
       const totalCredits = selectedSigns.length * selectedTypes.length * creditsPerRequest;
       console.log('totalCredits', totalCredits)
       // Use a fixed date within the valid range (2025-04-11 to 2025-04-13)
-      const validDate = new Date('2025-04-13T00:00:00.000Z');
-      console.log('validDate', validDate)
+      const validDate = new Date(dateTime + 'T00:00:00.000Z');
+        console.log('validDate', validDate)
       // Make parallel requests for all combinations
       const requests = selectedSigns.flatMap(sign =>
         selectedTypes.map(type =>
