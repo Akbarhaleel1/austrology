@@ -132,6 +132,7 @@ module.exports = {
   },
   getDailyHoroscope: async function (accessToken, datetime, signs = 'all', types = 'all') {
     try {
+      console.log('datetime of getDailyHoroscope',datetime)
       const validSigns = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
       const validTypes = ['general', 'career', 'love', 'money'];
 
