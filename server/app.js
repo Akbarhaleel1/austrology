@@ -6,6 +6,7 @@ const app = express();
 const cors = require('cors');
 const { default: axios } = require("axios");
 const { validationResult } = require('express-validator');
+const cache = require('./utils/cache');
 
 app.use(cors());
 
@@ -31,16 +32,25 @@ app.get("/", (req, res) => {
 // Endpoint to fetch Kundli data
 app.get("/api/kundli", async (req, res) => {
   const { datetime, coordinates } = req.query;
-  console.log("Received params:", datetime, coordinates);
   if (!datetime || !coordinates) {
     return res.status(400).json({ error: "datetime and coordinates are required" });
   }
 
   try {
+    // Check cache first
+    const cachedData = cache.get('kundli', { datetime, coordinates });
+    if (cachedData) {
+      console.log('Returning cached Kundli data');
+      return res.status(200).json({ data: cachedData, cached: true });
+    }
+
     const accessToken = await getAccessToken();
     const kundliData = await getKundliData(accessToken, datetime, coordinates);
-    console.log('kundliData', kundliData)
-    res.status(200).json({ data: kundliData });
+    
+    // Store in cache
+    cache.set('kundli', { datetime, coordinates }, kundliData);
+    console.log('set kundliData data in cache')
+    res.status(200).json({ data: kundliData, cached: false });
 
   } catch (error) {
     console.error('Error fetching Kundli data:', error);
@@ -49,18 +59,26 @@ app.get("/api/kundli", async (req, res) => {
 });
 app.get("/inauspicious-period", async (req, res) => {
   const { datetime, coordinates } = req.query;
-  console.log('inauspicious-period is working', datetime, coordinates)
   if (!datetime || !coordinates) {
     return res.status(400).json({ error: "datetime and coordinates are required" });
   }
-  console.log('1');
   const [latitude, longitude] = coordinates.split(",");
 
   try {
+    // Check cache first
+    const cachedData = cache.get('inauspicious-period', { datetime, coordinates });
+    if (cachedData) {
+      console.log('Returning cached inauspicious period data');
+      return res.status(200).json({ data: cachedData, cached: true });
+    }
+
     const accessToken = await getAccessToken();
     const kundliData = await getInauspiciousPeriod(accessToken, datetime, latitude, longitude);
-    console.log("Kundli Data:", kundliData);
-    res.status(200).json({ data: kundliData });
+    
+    // Store in cache
+    cache.set('inauspicious-period', { datetime, coordinates }, kundliData);
+    console.log('saved cache inauspicious period data');
+    res.status(200).json({ data: kundliData, cached: false });
 
   } catch (error) {
     console.error("Error fetching Kundli data:", error);
@@ -70,9 +88,7 @@ app.get("/inauspicious-period", async (req, res) => {
 
 
 app.get("/daily-horoscope", async (req, res) => {
-  console.log('daily-horoscope')
   const { datetime, sign, type } = req.query;
-  console.log('req.query', req.query)
   if (!datetime || !sign || !type) {
     return res.status(400).json({ error: "datetime, sign, and type are required" });
   }
@@ -88,10 +104,19 @@ app.get("/daily-horoscope", async (req, res) => {
   }
 
   try {
+    // Check cache first
+    const cachedData = cache.get('daily-horoscope', { datetime, sign, type });
+    if (cachedData) {
+      console.log('Returning cached horoscope data');
+      return res.status(200).json({ data: cachedData, cached: true });
+    }
+
     const accessToken = await getAccessToken();
-    console.log('accessToken is working')
     const horoscopeData = await getDailyHoroscope(accessToken, datetime, sign.toLowerCase(), type.toLowerCase());
-    res.status(200).json({ data: horoscopeData });
+    
+    // Store in cache
+    cache.set('daily-horoscope', { datetime, sign, type }, horoscopeData);
+    res.status(200).json({ data: horoscopeData, cached: false });
   } catch (error) {
     console.error('Error fetching daily horoscope:', error);
     res.status(500).json({ error: "Failed to fetch daily horoscope" });
@@ -104,12 +129,21 @@ app.get("/calendar", async (req, res) => {
   if (!datetime) {
     return res.status(400).json({ error: "datetime is required" });
   }
-
   try {
+    // Check cache first
+    const cachedData = cache.get('calendar', { datetime });
+    if (cachedData) {
+      console.log('Returning cached calendar data');
+      return res.status(200).json({ data: cachedData, cached: true });
+    }
+
     const accessToken = await getAccessToken();
     const getCalendar = await getCalendarData(accessToken, datetime);
-    console.log('kundliData', getCalendar)
-    res.status(200).json({ data: getCalendar });
+    
+    // Store in cache
+    cache.set('calendar', { datetime }, getCalendar);
+    console.log('saved calender data', getCalendar)
+    res.status(200).json({ data: getCalendar, cached: false });
 
   } catch (error) {
     console.error('Error fetching calender data:', error);
@@ -120,7 +154,6 @@ app.get("/calendar", async (req, res) => {
 
 
 async function geocodePlace(place) {
-  console.log('place in geocode', place)
   const response = await axios.get('https://api.geoapify.com/v1/geocode/search', {
     params: {
       text: place,
@@ -128,7 +161,6 @@ async function geocodePlace(place) {
     },
   });
   const { lat, lon } = response.data.features[0].properties;
-  console.log('geocdeo response', lat, lon)
 
   return `${lat},${lon}`;
 }
@@ -159,33 +191,36 @@ function prepareRequestData(body) {
 
 // Route handler
 app.post('/birth-details', async (req, res) => {
-  console.log('birth-details is tiggering',req.body)
-
   try {
     const { name, gender, birthDate, birthTime, placeOfBirth, language } = req.body;
     const { dateObj } = prepareRequestData(req.body);
 
-    console.log('req.body', req.body)
     // 1. Geocode place to coordinates
     const coordinates = await geocodePlace(placeOfBirth);
-    console.log('coordinates in birthdetails', coordinates)
-    // 2. Parse datetime with timezone 
-    console.log('birthDate', birthDate)
-    console.log('new Date(`${birthDate}T${birthTime}`)', new Date(`${birthDate}T${birthTime}`))
+    // 2. Parse datetime with timezone
     const datetime = formatDateWithOffset(dateObj);
-    console.log('birthdetails coordinates', coordinates)
-    console.log('datetimesssssss', datetime)
+
+    // Check cache first using relevant parameters
+    const cacheKey = { datetime, coordinates, gender, language };
+    const cachedData = cache.get('birth-details', cacheKey);
+    if (cachedData) {
+      console.log('Returning cached birth details data');
+      return res.json({ success: true, data: cachedData, cached: true });
+    }
+
     // 3. Call Prokerala API
     const accessToken = await getAccessToken();
     const kundliData = await callKundliApi(accessToken, {
       datetime,
       coordinates,
-      gender, // Include if required by the API
+      gender,
       language,
       ayanamsa: 1, // Lahiri
     });
-    console.log('dataaa',JSON.stringify(kundliData, null, 2));
-    res.json({ success: true, data: kundliData });
+
+    // Store in cache
+    cache.set('birth-details', cacheKey, kundliData);
+    res.json({ success: true, data: kundliData, cached: false });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -212,7 +247,6 @@ function formatDateWithOffset(date) {
 
 // Helper function to call Prokerala API
 async function callKundliApi(accessToken, params) {
-  console.log('callKundliApi is working', params)
   const response = await axios.get('https://api.prokerala.com/v2/astrology/kundli', {
     params: {
       datetime: params.datetime,
@@ -228,7 +262,6 @@ async function callKundliApi(accessToken, params) {
 
 // Route handler for Kundli Matching
 app.post('/kundali-matching', async (req, res) => {
-  console.log('kundali-matching request received', req.body);
   
   // Validate request
   const errors = validationResult(req);
@@ -247,15 +280,12 @@ app.post('/kundali-matching', async (req, res) => {
 
     // Prepare request parameters
     const requestParams = await prepareRequestParams(girlDetails, boyDetails, language, ayanamsa);
-    console.log('API Request Params:', requestParams);
 
     // Make API call to ProKerala
     const response = await callProKeralaAPI(accessToken, requestParams);
-    console.log('response', response.data.data)
     // Process and format the response
     const formattedResponse = formatResponse(response.data);
-console.log('formattedResponse', formattedResponse)
-console.log('response.data.data', response.data.data)
+
     res.json(response.data.data);
   } catch (error) {
     console.error('Kundali matching error:', error);
@@ -322,7 +352,6 @@ async function getCoordinates(location) {
     }
 
     const { lat, lon, timezone } = response.data.features[0].properties;
-    console.log('Coordinates found:', lat, lon);
 
     // Calculate timezone offset in minutes
     const timezoneOffset = timezone ? 
@@ -355,7 +384,6 @@ async function callProKeralaAPI(accessToken, params) {
     timeout: 10000 // 10 seconds timeout
   };
 
-  console.log('Calling ProKerala API with GET request...');
   return await axios.get(
     'https://api.prokerala.com/v2/astrology/kundli-matching/advanced',
     config
@@ -364,7 +392,6 @@ async function callProKeralaAPI(accessToken, params) {
 
 function formatResponse(apiResponse) {
   const {data} = apiResponse;
-  console.log('data isss', data);
   // Basic validation of API response
   if (!data || !data.guna_milan || !data.girl_info || !data.boy_info) {
     throw new Error('Invalid API response format');
