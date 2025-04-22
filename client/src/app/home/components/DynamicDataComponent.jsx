@@ -17,13 +17,11 @@ const DynamicDataComponent = ({ data }) => {
       case 4:
         return '#F44336'; // Red for fifth item
       default:
-        // For any additional items, cycle through the colors
         const colors = ['#4CAF50', '#2196F3', '#9E9E9E', '#1A237E', '#F44336'];
         return colors[index % colors.length];
     }
   };
 
-  // Function to format time only (e.g., "10:02 AM")
   const formatTimeOnly = (dateTimeString) => {
     const date = new Date(dateTimeString);
     return date.toLocaleTimeString('en-US', {

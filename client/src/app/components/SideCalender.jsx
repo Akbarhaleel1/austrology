@@ -24,9 +24,9 @@ const SideCalender = () => {
         </div>
         
         {/* Today Button */}
-        <button className="w-full bg-purple-600 text-white py-2 text-sm font-medium hover:bg-purple-700 transition-colors">
+        {/* <button className="w-full bg-purple-600 text-white py-2 text-sm font-medium hover:bg-purple-700 transition-colors">
           TODAY
-        </button>
+        </button> */}
       </div>
     </div>
     </div>

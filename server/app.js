@@ -89,6 +89,7 @@ app.get("/inauspicious-period", async (req, res) => {
 
 app.get("/daily-horoscope", async (req, res) => {
   const { datetime, sign, type } = req.query;
+  console.log('datetime is', datetime);
   if (!datetime || !sign || !type) {
     return res.status(400).json({ error: "datetime, sign, and type are required" });
   }

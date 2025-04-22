@@ -1,8 +1,6 @@
-
-
 "use client";
 import React, { useEffect, useState } from "react";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon } from 'lucide-react';
 import axios from "axios";
 import dayjs from "dayjs";
 import DynamicDataComponent from './DynamicDataComponent'
@@ -112,63 +110,7 @@ function App() {
     setCurrentYear(year);
   }, [datetime]);
 
-  // Load cached data on initial mount
-  // useEffect(() => {
-  //   loadCachedData();
-  // }, []);
-
-  // Function to load cached data
-  const loadCachedData = () => {
-    try {
-      // Check if we have cached coordinates
-      const cachedCoordinates = localStorage.getItem(CACHE_KEYS.COORDINATES);
-      if (cachedCoordinates) {
-        const [lat, lng] = cachedCoordinates.split(',');
-        setLatitude(parseFloat(lat));
-        setLongitude(parseFloat(lng));
-        setCoordinates(cachedCoordinates);
-      }
-      
-      // Check when data was last fetched
-      const lastFetched = localStorage.getItem(CACHE_KEYS.LAST_FETCHED);
-      const now = new Date().getTime();
-      
-      // If cache is valid (less than 6 hours old)
-      if (lastFetched && (now - parseInt(lastFetched)) < CACHE_EXPIRY) {
-        // Load panchang data
-        const cachedPanchang = localStorage.getItem(CACHE_KEYS.PANCHANG);
-        if (cachedPanchang) {
-          setPanchangData(JSON.parse(cachedPanchang));
-        }
-        
-        // Load calendar data
-        const cachedCalendar = localStorage.getItem(CACHE_KEYS.CALENDAR);
-        if (cachedCalendar) {
-          setCalenderData(JSON.parse(cachedCalendar));
-        }
-        
-        setDataLastFetched(parseInt(lastFetched));
-        setLoading(false);
-        
-        console.log("Using cached data from", new Date(parseInt(lastFetched)).toLocaleString());
-        return true;
-      }
-      
-      return false;
-    } catch (error) {
-      console.error("Error loading cached data:", error);
-      return false;
-    }
-  };
-
-  // Function to save data to cache
-  // const saveToCache = (key, data) => {
-  //   try {
-  //     localStorage.setItem(key, JSON.stringify(data));
-  //   } catch (error) {
-  //     console.error(`Error saving ${key} to cache:`, error);
-  //   }
-  // };
+  
 
   // Fetch user's geolocation
   useEffect(() => {
@@ -188,37 +130,68 @@ function App() {
           console.error("Error fetching geolocation:", error);
           setError(error);
           
-          // Try to load data with default coordinates if cached
-          // if (!loadCachedData()) {
-          //   setLoading(false);
-          // }
+
         }
       );
     } else if (!latitude && !longitude) {
       console.error("Geolocation is not supported by this browser.");
       setError(new Error("Geolocation is not supported by this browser."));
-      
-      // Try to load data with default coordinates if cached
-      // if (!loadCachedData()) {
-      //   setLoading(false);
-      // }
+
     }
   }, []);
 
+  const fetchDateBirthDatas = async () => {
+    
+    try {
+      // Prepare the request data
+      const birthDetails = {
+        name: "John Doe", 
+        gender: "Male",   
+        birthDate: {
+          year: 2004,
+          month: 4,      
+          day: 16
+        },
+        birthTime: {
+          hours: 9,   
+          minutes: 0,
+          period: "AM"  
+        },
+        placeOfBirth: "New York, USA",
+        language: "en",
+      };
+  
+      // Make the POST request
+      const response = await axios.post(
+        'http://localhost:3001/birth-details',
+        birthDetails
+      );
+      
+      // Handle response
+      const data = response.data.data; // Adjust according to your API response structure
+      console.log('Birth details data:', data);
+      setPanchangData(data);
+      return true;
+      
+    } catch (error) {
+      console.error("Error fetching birth details:", error);
+      setError(error.response?.data?.message || error.message);
+      return false;
+    }
+  };
+
   // Fetch Panchang data
   const fetchPanchangData = async () => {
-    console.log('austrology.synxup.tech')
     try {
-      const response = await axios.get(`https://api.austrology.synxup.tech/api/kundli`, {
+      const response = await axios.get(`http://localhost:3001/api/kundli`, {
         params: {
           datetime: datetime,
           coordinates: coordinates,
         },
       });
       const data = response.data.data.data;
-      console.log('data',data)
+      console.log('fetchPanchangData',data)
       setPanchangData(data);
-      // saveToCache(CACHE_KEYS.PANCHANG, data);
       return true;
     } catch (error) {
       console.error("Error fetching panchang data:", error);
@@ -230,14 +203,14 @@ function App() {
   // Fetch Calendar data
   const fetchCalendarData = async () => {
     try {
-      const response = await axios.get(`https://api.austrology.synxup.tech/calendar`, {
+      const response = await axios.get(`http://localhost:3001/calendar`, {
         params: {
           datetime: datetime,
         },
       });
-      const data = response.data.data.data;
+      const data = response.data.data;
+      console.log('fetchCalendarData', data)
       setCalenderData(data);
-      // saveToCache(CACHE_KEYS.CALENDAR, data);
       return true;
     } catch (error) {
       console.error("Error fetching calendar data:", error);
@@ -254,7 +227,7 @@ function App() {
         return false;
       }
 
-      const response = await axios.get("https://api.austrology.synxup.tech/inauspicious-period", {
+      const response = await axios.get("http://localhost:3001/inauspicious-period", {
         params: {
           datetime: datetime,
           coordinates: `${latitude},${longitude}`,
@@ -263,7 +236,7 @@ function App() {
 
       if (response.data?.data) {
         const data = response.data.data;
-        console.log('data is', data)
+        console.log('fetchInauspiciousPeriod is', data)
         setGoodTime(data)
         if (data?.calendar_date) {
           console.log("Calendar Date:", data.calendar_date);
@@ -305,7 +278,8 @@ function App() {
     const results = await Promise.all([
       fetchPanchangData(),
       fetchCalendarData(),
-      fetchInauspiciousPeriod()
+      fetchInauspiciousPeriod(),
+      fetchDateBirthDatas()
     ]);
     
     // Update last fetched timestamp
